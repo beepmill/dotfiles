@@ -77,8 +77,11 @@ if (!(Get-PackageProvider -Name Chocolatey)) {
 }
 
 # Install modules
-if (!(Get-Module posh-git)) {
-    Install-Module posh-git -Scope CurrentUser -Repository PSGallery -Force
+('posh-git',
+ 'PSScriptAnalyzer') | ForEach-Object {
+    if (!(Get-InstalledModule -Name $_ -ErrorAction SilentlyContinue)) {
+        Install-Module $_ -Scope CurrentUser -Repository PSGallery -Force
+    }
 }
 
 # Install dotfiles
