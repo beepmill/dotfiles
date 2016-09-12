@@ -58,13 +58,29 @@
     Pop-Location
 }
 
-# Install prereqs
+# Install providers
 if (!(Get-PackageProvider -Name NuGet)) {
     Install-PackageProvider -Name NuGet -Scope CurrentUser -Force
 }
-if (!(Get-Module posh-git)) {
-    Install-Module posh-git -Scope CurrentUser -Force
+if (!(Get-PackageProvider -Name Chocolatey)) {
+    Install-PackageProvider -Name Chocolatey -Scope CurrentUser -Force
+    Import-PackageProvider -Name Chocolatey
 }
 
+# Install packages
+('git.install',
+ 'tortoisegit',
+ 'meld') | ForEach-Object {
+    if (!(Get-Package -Name $_ -ProviderName Chocolatey -ErrorAction SilentlyContinue)) {
+        Install-Package -ProviderName Chocolatey -Name $_ -Force
+    }
+}
+
+# Install modules
+if (!(Get-Module posh-git)) {
+    Install-Module posh-git -Scope CurrentUser -Repository PSGallery -Force
+}
+
+# Install dotfiles
 Push-Location $PSScriptRoot
 Install-DotFiles -Source .\userprofile -Destination $env:USERPROFILE -Verbose
