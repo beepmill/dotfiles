@@ -78,6 +78,7 @@ if (!(Get-PackageProvider -Name Chocolatey)) {
 
 # Install modules
 ('posh-git',
+ 'PSReadline',
  'PSScriptAnalyzer') | ForEach-Object {
     if (!(Get-InstalledModule -Name $_ -ErrorAction SilentlyContinue)) {
         Install-Module $_ -Scope CurrentUser -Repository PSGallery -Force
